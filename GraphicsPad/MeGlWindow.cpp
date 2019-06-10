@@ -1,4 +1,5 @@
 #include <gl\glew.h>
+#include <iostream>
 #include "MeGlWindow.h"
 
 extern const char* vertexShaderCode;
@@ -8,16 +9,12 @@ void sendDataToOpenGL()
 {
     GLfloat verts[] =
     {
-         0.f,  0.f, // 0
+         0.f,  1.f, // 0
          1.f,  0.f,  0.f,
-         1.f,  1.f, // 1
-         1.f,  0.f,  0.f,
-        -1.f,  1.f, // 2
-         1.f,  0.f,  0.f,
-        -1.f, -1.f, // 3
-         1.f,  0.f,  0.f,
-         1.f, -1.f,  // 4
-         1.f,  0.f,  0.f,
+        -1.f, -1.f, // 1
+         0.f,  1.f,  0.f,
+         1.f, -1.f, // 2
+         0.f,  0.f,  1.f
     };
 
     GLuint vertexBufferID;
@@ -30,12 +27,32 @@ void sendDataToOpenGL()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 2));
 
     // 0, 1, 2 -> 1st triangle
-    // 0, 3, 4 -> 2nd triangle
-    GLushort indicies[] = { 0,1,2, 0,3,4 };
+    GLushort indicies[] = { 0,1,2 };
     GLuint indexBufferID;
     glGenBuffers(1, &indexBufferID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
+}
+
+bool checkShaderStatus(GLuint shaderID)
+{
+    GLint compileStatus;
+    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compileStatus);
+    if (compileStatus != GL_TRUE)
+    {
+        GLint infoLogLength;
+        glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
+        GLchar* buffer = new GLchar[infoLogLength];
+
+        GLsizei bufferSize;
+        glGetShaderInfoLog(shaderID, infoLogLength, &bufferSize, buffer);
+        std::cout << buffer << std::endl;
+
+        delete[] buffer;
+        return false;
+    }
+
+    return true;
 }
 
 void installShaders()
@@ -51,6 +68,10 @@ void installShaders()
 
     glCompileShader(vertexShaderID);
     glCompileShader(fragmentShaderID);
+
+    if (!checkShaderStatus(vertexShaderID) ||
+        !checkShaderStatus(fragmentShaderID))
+        return;
 
     GLuint programID = glCreateProgram();
     glAttachShader(programID, vertexShaderID);
@@ -77,8 +98,9 @@ void MeGlWindow::initializeGL()
 
 void MeGlWindow::paintGL()
 {
-	glClearColor(0.1f, 0.1f, 0.8f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
+    //glClearColor(0.1f, 0.1f, 0.8f, 1.f);
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClear(GL_COLOR_BUFFER_BIT);
 
     glViewport(0, 0, width(), height());
     //glDrawArrays(GL_TRIANGLES, 0, 6);
