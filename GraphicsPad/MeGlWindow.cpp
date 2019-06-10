@@ -34,18 +34,21 @@ void sendDataToOpenGL()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 }
 
-bool checkShaderStatus(GLuint shaderID)
+bool checkStatus(GLuint objectID,
+                 PFNGLGETSHADERIVPROC objectPropertyGetterFunc,
+                 PFNGLGETSHADERINFOLOGPROC getInfoLogFunc,
+                 GLenum statusType)
 {
-    GLint compileStatus;
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compileStatus);
-    if (compileStatus != GL_TRUE)
+    GLint status;
+    objectPropertyGetterFunc(objectID, statusType, &status);
+    if (status != GL_TRUE)
     {
         GLint infoLogLength;
-        glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
+        objectPropertyGetterFunc(objectID, GL_INFO_LOG_LENGTH, &infoLogLength);
         GLchar* buffer = new GLchar[infoLogLength];
 
         GLsizei bufferSize;
-        glGetShaderInfoLog(shaderID, infoLogLength, &bufferSize, buffer);
+        getInfoLogFunc(objectID, infoLogLength, &bufferSize, buffer);
         std::cout << buffer << std::endl;
 
         delete[] buffer;
@@ -53,6 +56,16 @@ bool checkShaderStatus(GLuint shaderID)
     }
 
     return true;
+}
+
+bool checkShaderStatus(GLuint shaderID)
+{
+    return checkStatus(shaderID, glGetShaderiv, glGetShaderInfoLog, GL_COMPILE_STATUS);
+}
+
+bool checkProgramStatus(GLuint programID)
+{
+    return checkStatus(programID, glGetProgramiv, glGetProgramInfoLog, GL_LINK_STATUS);
 }
 
 void installShaders()
@@ -74,9 +87,12 @@ void installShaders()
         return;
 
     GLuint programID = glCreateProgram();
-    glAttachShader(programID, vertexShaderID);
-    glAttachShader(programID, fragmentShaderID);
+    //glAttachShader(programID, vertexShaderID);
+    //glAttachShader(programID, fragmentShaderID);
     glLinkProgram(programID);
+
+    if( !checkProgramStatus(programID) )
+        return;
 
     glUseProgram(programID);
 }
