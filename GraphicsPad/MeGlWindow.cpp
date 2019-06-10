@@ -1,20 +1,29 @@
 #include <gl\glew.h>
 #include <iostream>
+#include <string>
+#include <fstream>
 #include "MeGlWindow.h"
-
-extern const char* vertexShaderCode;
-extern const char* fragmentShaderCode;
 
 void sendDataToOpenGL()
 {
+    const GLfloat RED_TRIANGLE_Z = 0.5f;
+    const GLfloat BLUE_TRIANGLE_Z = -0.5f;
+
     GLfloat verts[] =
     {
-         0.f,  1.f, // 0
+        -1.f, -1.f, RED_TRIANGLE_Z, // 0
          1.f,  0.f,  0.f,
-        -1.f, -1.f, // 1
-         0.f,  1.f,  0.f,
-         1.f, -1.f, // 2
-         0.f,  0.f,  1.f
+         0.f,  1.f, RED_TRIANGLE_Z, // 1
+         1.f,  0.f,  0.f,
+         1.f, -1.f, RED_TRIANGLE_Z, // 2
+         1.f,  0.f,  0.f,
+
+         -1.f,  1.f, BLUE_TRIANGLE_Z,
+          0.f,  0.f, 1.f,
+          0.f, -1.f, BLUE_TRIANGLE_Z,
+          0.f,  0.f, 1.f,
+          1.f,  1.f, BLUE_TRIANGLE_Z,
+          0.f,  0.f, 1.f
     };
 
     GLuint vertexBufferID;
@@ -22,12 +31,12 @@ void sendDataToOpenGL()
     glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 2));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
 
     // 0, 1, 2 -> 1st triangle
-    GLushort indicies[] = { 0,1,2 };
+    GLushort indicies[] = { 0,1,2, 3,4,5 };
     GLuint indexBufferID;
     glGenBuffers(1, &indexBufferID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
@@ -68,15 +77,33 @@ bool checkProgramStatus(GLuint programID)
     return checkStatus(programID, glGetProgramiv, glGetProgramInfoLog, GL_LINK_STATUS);
 }
 
+std::string readShaderCode(const char* fileName)
+{
+    std::ifstream meInput(fileName);
+
+    if (!meInput.good())
+    {
+        std::cout << "File failed to load..." << fileName;
+        exit(1);
+    }
+
+    return std::string(
+        std::istreambuf_iterator<char>(meInput),
+        std::istreambuf_iterator<char>()
+    );
+}
+
 void installShaders()
 {
     GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 
     const char* adapter[1];
-    adapter[0] = vertexShaderCode;
+    std::string temp = readShaderCode("VertexShaderCode.glsl");
+    adapter[0] = temp.c_str();
     glShaderSource(vertexShaderID, 1, adapter, 0);
-    adapter[0] = fragmentShaderCode;
+    temp = readShaderCode("FragmentShaderCode.glsl");
+    adapter[0] = temp.c_str();
     glShaderSource(fragmentShaderID, 1, adapter, 0);
 
     glCompileShader(vertexShaderID);
@@ -87,8 +114,8 @@ void installShaders()
         return;
 
     GLuint programID = glCreateProgram();
-    //glAttachShader(programID, vertexShaderID);
-    //glAttachShader(programID, fragmentShaderID);
+    glAttachShader(programID, vertexShaderID);
+    glAttachShader(programID, fragmentShaderID);
     glLinkProgram(programID);
 
     if( !checkProgramStatus(programID) )
@@ -108,17 +135,17 @@ MeGlWindow::~MeGlWindow()
 void MeGlWindow::initializeGL()
 {
 	glewInit();
+    glEnable(GL_DEPTH_TEST);
     sendDataToOpenGL();
     installShaders();
 }
 
 void MeGlWindow::paintGL()
 {
-    //glClearColor(0.1f, 0.1f, 0.8f, 1.f);
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
 
     glViewport(0, 0, width(), height());
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 }
