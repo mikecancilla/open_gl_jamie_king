@@ -70,12 +70,11 @@ void sendAnotherTriToOpenGL()
 void MeGlWindow::paintGL()
 {
     GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
-    GLCall(glClear(GL_COLOR_BUFFER_BIT));
-    GLCall(glClear(GL_DEPTH_BUFFER_BIT));
+    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
     GLCall(glViewport(0, 0, width(), height()));
     sendAnotherTriToOpenGL();
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, numTris * NUM_VERTICIES_PER_TRI));
+    GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
 }
 
 bool checkStatus(GLuint objectID,
