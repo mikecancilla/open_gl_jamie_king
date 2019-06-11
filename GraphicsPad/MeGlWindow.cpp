@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <glm.hpp>
+#include <Primitives/Vertex.h>
 #include "MeGlWindow.h"
 
 const float X_DELTA = 0.1f;
@@ -10,7 +12,7 @@ const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * NUM_FLOATS_PER_VERTICE * sizeof(float);
 const uint MAX_TRIS = 20;
 
-uint numTris = 0;
+uint numTris = 1;
 
 void GLClearError()
 {
@@ -31,14 +33,34 @@ bool GLLogCall(const char* function, const char* file, int line)
 
 void sendDataToOpenGL()
 {
+    Vertex myTri[] = {
+        glm::vec3(0, 1, 0),
+        glm::vec3(1, 0, 0),
+
+        glm::vec3(-1, -1, 0),
+        glm::vec3(0, 1, 0),
+
+        glm::vec3(1, -1, 0),
+        glm::vec3(0, 0, 1)
+    };
+
     GLuint vertexBufferID;
     GLCall(glGenBuffers(1, &vertexBufferID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, MAX_TRIS * TRIANGLE_BYTE_SIZE, NULL, GL_STATIC_DRAW));
+//    GLCall(glBufferData(GL_ARRAY_BUFFER, MAX_TRIS * TRIANGLE_BYTE_SIZE, NULL, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(myTri), myTri, GL_STATIC_DRAW));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0));
     GLCall(glEnableVertexAttribArray(1));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3)));
+
+    // 0, 1, 2 -> 1st triangle
+    // 0, 3, 4 -> 2nd triangle
+    GLushort indicies[] = { 0,1,2, /*0,3,4*/ };
+    GLuint indexBufferID;
+    glGenBuffers(1, &indexBufferID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicies), indicies, GL_STATIC_DRAW);
 }
 
 void sendAnotherTriToOpenGL()
@@ -70,11 +92,16 @@ void sendAnotherTriToOpenGL()
 void MeGlWindow::paintGL()
 {
     GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
-    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+//    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+    GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
     GLCall(glViewport(0, 0, width(), height()));
-    sendAnotherTriToOpenGL();
-    GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
+    
+    //sendAnotherTriToOpenGL();
+    //GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
+
+    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
+
 }
 
 bool checkStatus(GLuint objectID,
@@ -169,7 +196,7 @@ MeGlWindow::~MeGlWindow()
 void MeGlWindow::initializeGL()
 {
 	glewInit();
-    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_DEPTH_TEST);
     sendDataToOpenGL();
     installShaders();
 }
