@@ -10,7 +10,8 @@
 const float X_DELTA = 0.1f;
 const uint NUM_VERTICIES_PER_TRI = 3;
 const uint NUM_FLOATS_PER_VERTICE = 6;
-const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * NUM_FLOATS_PER_VERTICE * sizeof(float);
+const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
+const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * VERTEX_BYTE_SIZE;
 const uint MAX_TRIS = 20;
 GLuint programID;
 
@@ -35,24 +36,25 @@ bool GLLogCall(const char* function, const char* file, int line)
 
 void sendDataToOpenGL()
 {
-    ShapeData tri = ShapeGenerator::makeTriangle();
+    //ShapeData shape = ShapeGenerator::makeTriangle();
+    ShapeData shape = ShapeGenerator::makeCube();
 
     GLuint vertexBufferID;
     GLCall(glGenBuffers(1, &vertexBufferID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID));
 //    GLCall(glBufferData(GL_ARRAY_BUFFER, MAX_TRIS * TRIANGLE_BYTE_SIZE, NULL, GL_STATIC_DRAW));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, tri.vertexBufferSize(), tri.vertices, GL_STATIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW));
     GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, 0));
+    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
     GLCall(glEnableVertexAttribArray(1));
-    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3)));
+    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
 
     GLuint indexBufferID;
     glGenBuffers(1, &indexBufferID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, tri.indexBufferSize(), tri.indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 
-    tri.cleanup();
+    shape.cleanup();
 }
 
 void sendAnotherTriToOpenGL()
@@ -89,14 +91,23 @@ void MeGlWindow::paintGL()
 
     GLCall(glViewport(0, 0, width(), height()));
     
-    glm::vec3 dominatingColor(0, 1, 0);
     GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
+    GLint yFlipUniformLocation = glGetUniformLocation(programID, "yFlip");
+
+    glm::vec3 dominatingColor(0, 1, 0);
     glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+    glUniform1f(yFlipUniformLocation, 1.0f);
+    GLCall(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0));
+
+    dominatingColor.r = 0;
+    dominatingColor.b = 1;
+    glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
+    glUniform1f(yFlipUniformLocation, -1.0f);
+    GLCall(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0));
 
     //sendAnotherTriToOpenGL();
     //GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
 
-    GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0));
 
 }
 
