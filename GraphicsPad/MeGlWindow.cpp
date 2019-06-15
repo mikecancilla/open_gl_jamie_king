@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
 #include <Primitives/Vertex.h>
 #include <Primitives/ShapeGenerator.h>
 #include "MeGlWindow.h"
@@ -14,6 +15,7 @@ const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * VERTEX_BYTE_SIZE;
 const uint MAX_TRIS = 20;
 GLuint programID;
+GLuint numIndices;
 
 uint numTris = 1;
 
@@ -54,6 +56,8 @@ void sendDataToOpenGL()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
 
+    numIndices = shape.numIndices;
+
     shape.cleanup();
 }
 
@@ -87,10 +91,23 @@ void MeGlWindow::paintGL()
 {
     GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-//    GLCall(glClear(GL_COLOR_BUFFER_BIT));
-
     GLCall(glViewport(0, 0, width(), height()));
-    
+
+    glm::mat4 projectionMatrix = glm::perspective(45.f, ((float)width()) / height(), 0.1f, 10.f);
+    glm::mat4 projectionTranslationMatrix = glm::translate(projectionMatrix, glm::vec3(0, 0, -3.0f));
+    glm::mat4 fullTransformMatrix = glm::rotate(projectionTranslationMatrix, 54.f, glm::vec3(1.f, 0.f, 0.f));
+
+    GLint fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
+//    GLint modelTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelTransformMatrix");
+//    GLint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
+
+    GLCall(glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
+//    GLCall(glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]));
+//    GLCall(glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, &projectionMatrix[0][0]));
+
+    GLCall(glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0));
+
+/*
     GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
     GLint yFlipUniformLocation = glGetUniformLocation(programID, "yFlip");
 
@@ -104,11 +121,9 @@ void MeGlWindow::paintGL()
     glUniform3fv(dominatingColorUniformLocation, 1, &dominatingColor[0]);
     glUniform1f(yFlipUniformLocation, -1.0f);
     GLCall(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0));
-
+*/
     //sendAnotherTriToOpenGL();
     //GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
-
-
 }
 
 bool checkStatus(GLuint objectID,
@@ -186,8 +201,12 @@ void installShaders()
     glAttachShader(programID, fragmentShaderID);
     glLinkProgram(programID);
 
-    if( !checkProgramStatus(programID) )
+   
+	if( !checkProgramStatus(programID) )
         return;
+
+	glDeleteShader(vertexShaderID);
+    glDeleteShader(fragmentShaderID);
 
     GLCall(glUseProgram(programID));
 }
@@ -198,6 +217,8 @@ MeGlWindow::MeGlWindow()
 
 MeGlWindow::~MeGlWindow()
 {
+	glUseProgram(0);
+	glDeleteProgram(programID);
 }
 
 void MeGlWindow::initializeGL()
