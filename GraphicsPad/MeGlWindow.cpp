@@ -4,6 +4,7 @@
 #include <fstream>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
+#include <gtx/transform.hpp>
 #include <Primitives/Vertex.h>
 #include <Primitives/ShapeGenerator.h>
 #include "MeGlWindow.h"
@@ -36,7 +37,7 @@ bool GLLogCall(const char* function, const char* file, int line)
     return true;
 }
 
-void sendDataToOpenGL()
+void MeGlWindow::sendDataToOpenGL()
 {
     //ShapeData shape = ShapeGenerator::makeTriangle();
     ShapeData shape = ShapeGenerator::makeCube();
@@ -52,13 +53,39 @@ void sendDataToOpenGL()
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
 
     GLuint indexBufferID;
-    glGenBuffers(1, &indexBufferID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW);
+    GLCall(glGenBuffers(1, &indexBufferID));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, shape.indexBufferSize(), shape.indices, GL_STATIC_DRAW));
 
     numIndices = shape.numIndices;
 
     shape.cleanup();
+
+	GLuint	transformationMatrixBufferID;
+	GLCall(glGenBuffers(1, &transformationMatrixBufferID));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, transformationMatrixBufferID));
+
+	glm::mat4 projectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
+
+	glm::mat4 fullTransforms[] =
+	{
+		projectionMatrix * glm::translate(glm::vec3(-1.f, 0, -3.f)) * glm::rotate(43.f, glm::vec3(1.f, 0.f, 0.f)),
+		projectionMatrix * glm::translate(glm::vec3(1.f, 0, -3.75f)) * glm::rotate(128.f, glm::vec3(0.f, 1.f, 0.f))
+	};
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransforms), fullTransforms, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 0));
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 4));
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 8));
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 12));
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
+	glVertexAttribDivisor(2, 1);
+	glVertexAttribDivisor(3, 1);
+	glVertexAttribDivisor(4, 1);
+	glVertexAttribDivisor(5, 1);
 }
 
 void sendAnotherTriToOpenGL()
@@ -93,19 +120,40 @@ void MeGlWindow::paintGL()
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     GLCall(glViewport(0, 0, width(), height()));
 
-    glm::mat4 projectionMatrix = glm::perspective(45.f, ((float)width()) / height(), 0.1f, 10.f);
-    glm::mat4 projectionTranslationMatrix = glm::translate(projectionMatrix, glm::vec3(0, 0, -3.0f));
-    glm::mat4 fullTransformMatrix = glm::rotate(projectionTranslationMatrix, 54.f, glm::vec3(1.f, 0.f, 0.f));
+	// This is more optimal, but harder to read
+    //glm::mat4 projectionMatrix = glm::perspective(45.f, ((float)width()) / height(), 0.1f, 10.f);
+    //glm::mat4 projectionTranslationMatrix = glm::translate(projectionMatrix, glm::vec3(0, 0, -3.0f));
+    //glm::mat4 fullTransformMatrix = glm::rotate(projectionTranslationMatrix, 54.f, glm::vec3(1.f, 0.f, 0.f));
 
-    GLint fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
+	//GLint fullTransformMatrixUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
+
+	//glm::mat4 fullTransformMatrix;
+	//glm::mat4 projectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
+
+	// Cube 1
+    //glm::mat4 translationMatrix = glm::translate(glm::vec3(-1.f, 0, -3.f));
+    //glm::mat4 rotationMatrix = glm::rotate(43.f, glm::vec3(1.f, 0.f, 0.f));
+
+//	fullTransformMatrix = projectionMatrix * translationMatrix * rotationMatrix;
+
 //    GLint modelTransformMatrixUniformLocation = glGetUniformLocation(programID, "modelTransformMatrix");
 //    GLint projectionMatrixUniformLocation = glGetUniformLocation(programID, "projectionMatrix");
 
-    GLCall(glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
+//    GLCall(glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
 //    GLCall(glUniformMatrix4fv(modelTransformMatrixUniformLocation, 1, GL_FALSE, &modelTransformMatrix[0][0]));
 //    GLCall(glUniformMatrix4fv(projectionMatrixUniformLocation, 1, GL_FALSE, &projectionMatrix[0][0]));
 
-    GLCall(glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0));
+//    GLCall(glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0));
+
+	// Cube 2
+	//translationMatrix = glm::translate(glm::vec3(1.f, 0, -3.75f));
+    //rotationMatrix = glm::rotate(128.f, glm::vec3(0.f, 1.f, 0.f));
+
+//	fullTransformMatrix = projectionMatrix * translationMatrix * rotationMatrix;
+
+//    GLCall(glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
+//    GLCall(glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0));
+    GLCall(glDrawElementsInstanced(GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0, 5));
 
 /*
     GLint dominatingColorUniformLocation = glGetUniformLocation(programID, "dominatingColor");
@@ -126,7 +174,7 @@ void MeGlWindow::paintGL()
     //GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
 }
 
-bool checkStatus(GLuint objectID,
+bool MeGlWindow::checkStatus(GLuint objectID,
                  PFNGLGETSHADERIVPROC objectPropertyGetterFunc,
                  PFNGLGETSHADERINFOLOGPROC getInfoLogFunc,
                  GLenum statusType)
@@ -150,17 +198,17 @@ bool checkStatus(GLuint objectID,
     return true;
 }
 
-bool checkShaderStatus(GLuint shaderID)
+bool MeGlWindow::checkShaderStatus(GLuint shaderID)
 {
     return checkStatus(shaderID, glGetShaderiv, glGetShaderInfoLog, GL_COMPILE_STATUS);
 }
 
-bool checkProgramStatus(GLuint programID)
+bool MeGlWindow::checkProgramStatus(GLuint programID)
 {
     return checkStatus(programID, glGetProgramiv, glGetProgramInfoLog, GL_LINK_STATUS);
 }
 
-std::string readShaderCode(const char* fileName)
+std::string MeGlWindow::readShaderCode(const char* fileName)
 {
     std::ifstream meInput(fileName);
 
@@ -176,7 +224,7 @@ std::string readShaderCode(const char* fileName)
     );
 }
 
-void installShaders()
+void MeGlWindow::installShaders()
 {
     GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
     GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
