@@ -8,6 +8,7 @@
 #include <Primitives/Vertex.h>
 #include <Primitives/ShapeGenerator.h>
 #include "MeGlWindow.h"
+#include "Camera.h"
 
 const float X_DELTA = 0.1f;
 const uint NUM_VERTICIES_PER_TRI = 3;
@@ -17,6 +18,7 @@ const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * VERTEX_BYTE_SIZE;
 const uint MAX_TRIS = 20;
 GLuint programID;
 GLuint numIndices;
+Camera camera;
 
 uint numTris = 1;
 
@@ -69,8 +71,8 @@ void MeGlWindow::sendDataToOpenGL()
 
 	glm::mat4 fullTransforms[] =
 	{
-		projectionMatrix * glm::translate(glm::vec3(-1.f, 0, -3.f)) * glm::rotate(43.f, glm::vec3(1.f, 0.f, 0.f)),
-		projectionMatrix * glm::translate(glm::vec3(1.f, 0, -3.75f)) * glm::rotate(128.f, glm::vec3(0.f, 1.f, 0.f))
+		projectionMatrix * camera.getWorldToViewMatrix() * glm::translate(glm::vec3(-1.f, 0, -3.f)) * glm::rotate(43.f, glm::vec3(1.f, 0.f, 0.f)),
+		projectionMatrix * camera.getWorldToViewMatrix() * glm::translate(glm::vec3(1.f, 0, -3.75f)) * glm::rotate(128.f, glm::vec3(0.f, 1.f, 0.f))
 	};
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransforms), fullTransforms, GL_STATIC_DRAW);
@@ -245,13 +247,26 @@ void MeGlWindow::installShaders()
         return;
 
     programID = glCreateProgram();
+
     glAttachShader(programID, vertexShaderID);
     glAttachShader(programID, fragmentShaderID);
-    glLinkProgram(programID);
 
+	// The preferred way to set shader variable locations is in shader code,
+	//  but if your version of OpenGL does not support setting shader variable locations,
+	//  then use the following 2 ways:
+
+	// Way 1: Optional way to SET the location of a shader variable.  Must do before linking
+	//glBindAttribLocation(programID, 2, "position");
+
+	glLinkProgram(programID);
    
 	if( !checkProgramStatus(programID) )
         return;
+
+	// Way 2: Optional way to get the layout location of a variable in the shader, let the linker decide
+	GLint positionLocation = glGetAttribLocation(programID, "position");
+	GLint colorLocation = glGetAttribLocation(programID, "vertexColor");
+	GLint transformLocation = glGetAttribLocation(programID, "fullTransformMatrix");
 
 	glDeleteShader(vertexShaderID);
     glDeleteShader(fragmentShaderID);
