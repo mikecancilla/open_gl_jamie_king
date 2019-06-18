@@ -16,6 +16,8 @@ class MeGlWindow : public QGLWidget
 protected:
 	void initializeGL() override;
 	void paintGL() override;
+	void mouseMoveEvent(QMouseEvent* me) override;
+
 	void sendDataToOpenGL();
 
 	std::string readShaderCode(const char* fileName);

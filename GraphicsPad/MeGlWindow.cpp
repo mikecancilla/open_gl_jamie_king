@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <QtGui/QMouseEvent>
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtx/transform.hpp>
@@ -67,7 +68,8 @@ void MeGlWindow::sendDataToOpenGL()
 	GLCall(glGenBuffers(1, &transformationMatrixBufferID));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, transformationMatrixBufferID));
 
-	glm::mat4 projectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
+/*
+    glm::mat4 projectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
 
 	glm::mat4 fullTransforms[] =
 	{
@@ -76,6 +78,8 @@ void MeGlWindow::sendDataToOpenGL()
 	};
 
 	glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransforms), fullTransforms, GL_STATIC_DRAW);
+*/
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * 2, 0, GL_DYNAMIC_DRAW); // Create space but don't send data down yet
 	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 0));
 	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 4));
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(float) * 8));
@@ -118,7 +122,17 @@ void sendAnotherTriToOpenGL()
 
 void MeGlWindow::paintGL()
 {
-    GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
+	glm::mat4 projectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
+
+	glm::mat4 fullTransforms[] =
+	{
+		projectionMatrix * camera.getWorldToViewMatrix() * glm::translate(glm::vec3(-1.f, 0, -3.f)) * glm::rotate(43.f, glm::vec3(1.f, 0.f, 0.f)),
+		projectionMatrix * camera.getWorldToViewMatrix() * glm::translate(glm::vec3(1.f, 0, -3.75f)) * glm::rotate(128.f, glm::vec3(0.f, 1.f, 0.f))
+	};
+
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fullTransforms), fullTransforms, GL_DYNAMIC_DRAW);
+
+	GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
     GLCall(glViewport(0, 0, width(), height()));
 
@@ -174,6 +188,12 @@ void MeGlWindow::paintGL()
 */
     //sendAnotherTriToOpenGL();
     //GLCall(glDrawArrays(GL_TRIANGLES, (numTris - 1) * NUM_VERTICIES_PER_TRI, NUM_VERTICIES_PER_TRI));
+}
+
+void MeGlWindow::mouseMoveEvent(QMouseEvent *e)
+{
+	camera.mouseUpdate(glm::vec2(e->x(), e->y()));
+	repaint();
 }
 
 bool MeGlWindow::checkStatus(GLuint objectID,
@@ -286,8 +306,11 @@ MeGlWindow::~MeGlWindow()
 
 void MeGlWindow::initializeGL()
 {
+	setMouseTracking(true);
+
 	glewInit();
     glEnable(GL_DEPTH_TEST);
+
     sendDataToOpenGL();
     installShaders();
 }
