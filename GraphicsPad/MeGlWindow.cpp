@@ -56,7 +56,8 @@ bool GLLogCall(const char* function, const char* file, int line)
 void MeGlWindow::sendDataToOpenGL()
 {
     //ShapeData shape = ShapeGenerator::makeTriangle();
-    ShapeData cube = ShapeGenerator::makeCube();
+    //ShapeData cube = ShapeGenerator::makeCube();
+    ShapeData cube = ShapeGenerator::makePlane();
     ShapeData arrow = ShapeGenerator::makeArrow();
 
     GLCall(glGenBuffers(1, &theBufferID));
@@ -142,7 +143,7 @@ void MeGlWindow::paintGL()
     // Slower way using Uniforms instead of instance data
 
 	glm::mat4 fullTransformMatrix;
-    glm::mat4 viewToProjectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
+    glm::mat4 viewToProjectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 20.f);
     glm::mat4 worldToViewMatrix = camera.getWorldToViewMatrix();
     glm::mat4 worldToProjectionMatrix = viewToProjectionMatrix * worldToViewMatrix;
 
