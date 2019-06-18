@@ -21,8 +21,18 @@ void Camera::mouseUpdate(const glm::vec2 & newMousePosition)
 		return;
 	}
 
-	// 1 degree per mouse pixel
-	viewDirection = glm::mat3(glm::rotate(-mouseDelta.x / 128.f, UP)) * viewDirection;
+	const float ROTATIONAL_SPEED = 128.f;
+
+	// 1 degree per mouse pixel, update the X rotation
+	viewDirection = glm::mat3(glm::rotate(-mouseDelta.x / ROTATIONAL_SPEED, UP)) * viewDirection;
+
+	// For a vertical camera rotation, you currently have a look direction and and up, these are 90 degrees from each other.
+	// Take the cross product of the view and up, to get a perpendicular vector to the right
+	// Rotate up or down around this perpendicular cross product result vector
+	glm::vec3 toRotateAround = glm::cross(viewDirection, UP);
+
+	// Update the Y rotation
+	viewDirection = glm::mat3(glm::rotate(-mouseDelta.y / ROTATIONAL_SPEED, toRotateAround)) * viewDirection;
 
 	oldMousePosition = newMousePosition;
 }
