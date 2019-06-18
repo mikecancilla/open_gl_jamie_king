@@ -340,6 +340,7 @@ MeGlWindow::MeGlWindow()
 
 MeGlWindow::~MeGlWindow()
 {
+    glDeleteBuffers(1, &theBufferID);
 	glUseProgram(0);
 	glDeleteProgram(programID);
 }
