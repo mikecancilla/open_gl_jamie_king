@@ -23,6 +23,7 @@ protected:
 
 	std::string readShaderCode(const char* fileName);
     void installShaders();
+    void setupVertexArrays();
 
 	bool checkStatus(GLuint objectID,
                      PFNGLGETSHADERIVPROC objectPropertyGetterFunc,

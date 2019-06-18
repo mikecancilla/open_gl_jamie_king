@@ -18,14 +18,21 @@ const uint NUM_FLOATS_PER_VERTICE = 6;
 const uint VERTEX_BYTE_SIZE = NUM_FLOATS_PER_VERTICE * sizeof(float);
 const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * VERTEX_BYTE_SIZE;
 const uint MAX_TRIS = 20;
+
 GLuint programID;
-GLuint cubeNumIndices;
-GLuint arrowNumIndices;
 Camera camera;
+GLint fullTransformUniformLocation;
+
 GLuint cubeVertexBufferID;
 GLuint cubeIndexBufferID;
+GLuint cubeNumIndices;
+
 GLuint arrowVertexBufferID;
 GLuint arrowIndexBufferID;
+GLuint arrowNumIndices;
+
+GLuint cubeVertexArrayObjectID;
+GLuint arrowVertexArrayObjectID;
 
 uint numTris = 1;
 
@@ -55,8 +62,6 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glGenBuffers(1, &cubeVertexBufferID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID));
     GLCall(glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW));
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glEnableVertexAttribArray(1));
 
     GLCall(glGenBuffers(1, &cubeIndexBufferID));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID));
@@ -72,8 +77,6 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glGenBuffers(1, &arrowVertexBufferID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, arrowVertexBufferID));
     GLCall(glBufferData(GL_ARRAY_BUFFER, shape.vertexBufferSize(), shape.vertices, GL_STATIC_DRAW));
-    //GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
-    //GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
 
     GLCall(glGenBuffers(1, &arrowIndexBufferID));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, arrowIndexBufferID));
@@ -141,7 +144,6 @@ void MeGlWindow::paintGL()
     GLCall(glViewport(0, 0, width(), height()));
 
     // Slower way using Uniforms instead of instance data
-    GLint fullTransformUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 
 	glm::mat4 fullTransformMatrix;
     glm::mat4 viewToProjectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 10.f);
@@ -149,14 +151,9 @@ void MeGlWindow::paintGL()
     glm::mat4 worldToProjectionMatrix = viewToProjectionMatrix * worldToViewMatrix;
 
     // Cube
-
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID));
-    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
-    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID));
-
+    GLCall(glBindVertexArray(cubeVertexArrayObjectID));
     glm::mat4 model1ToWorldMatrix = 
-        glm::translate(glm::vec3(-1.f, 0.f, -3.f)) *
+        glm::translate(glm::vec3(-2.f, 0.f, -3.f)) *
         glm::rotate(36.f, glm::vec3(1.f, 0.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * model1ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
@@ -165,7 +162,7 @@ void MeGlWindow::paintGL()
     GLCall(glDrawElements(GL_TRIANGLES, cubeNumIndices, GL_UNSIGNED_SHORT, 0));
 
     glm::mat4 model2ToWorldMatrix = 
-        glm::translate(glm::vec3(1.f, 0.f, -3.75f)) *
+        glm::translate(glm::vec3(2.f, 0.f, -3.75f)) *
         glm::rotate(126.f, glm::vec3(0.f, 1.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * model2ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
@@ -174,12 +171,7 @@ void MeGlWindow::paintGL()
     GLCall(glDrawElements(GL_TRIANGLES, cubeNumIndices, GL_UNSIGNED_SHORT, 0));
 
     // Arrow
-
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, arrowVertexBufferID));
-    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
-    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, arrowIndexBufferID));
-
+    GLCall(glBindVertexArray(arrowVertexArrayObjectID));
     glm::mat4 arrowModelToWorldMatrix = glm::translate(glm::vec3(0.f, 0.f, -3.f));
     fullTransformMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
@@ -319,6 +311,31 @@ void MeGlWindow::installShaders()
     GLCall(glUseProgram(programID));
 }
 
+// Vertex array objects store the state of the vertex attrib pointers
+void MeGlWindow::setupVertexArrays()
+{
+    GLCall(glGenVertexArrays(1, &cubeVertexArrayObjectID));
+    GLCall(glGenVertexArrays(1, &arrowVertexArrayObjectID));
+
+    // Setup a cube vertex array object
+    GLCall(glBindVertexArray(cubeVertexArrayObjectID));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, cubeVertexBufferID));
+    GLCall(glEnableVertexAttribArray(0));
+    GLCall(glEnableVertexAttribArray(1));
+    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
+    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cubeIndexBufferID));
+
+    // Setup an arrow vertex array object
+    GLCall(glBindVertexArray(arrowVertexArrayObjectID));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, arrowVertexBufferID));
+    GLCall(glEnableVertexAttribArray(0));
+    GLCall(glEnableVertexAttribArray(1));
+    GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
+    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, arrowIndexBufferID));
+}
+
 MeGlWindow::MeGlWindow()
 {
 }
@@ -337,5 +354,8 @@ void MeGlWindow::initializeGL()
     glEnable(GL_DEPTH_TEST);
 
     sendDataToOpenGL();
+    setupVertexArrays();
     installShaders();
+
+    fullTransformUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
 }
