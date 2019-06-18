@@ -16,7 +16,8 @@ class MeGlWindow : public QGLWidget
 protected:
 	void initializeGL() override;
 	void paintGL() override;
-	void mouseMoveEvent(QMouseEvent* me) override;
+	void mouseMoveEvent(QMouseEvent* e) override;
+	void keyPressEvent(QKeyEvent* e) override;
 
 	void sendDataToOpenGL();
 

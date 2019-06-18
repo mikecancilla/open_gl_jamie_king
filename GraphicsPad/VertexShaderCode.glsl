@@ -2,13 +2,13 @@
 
 in layout(location=0) vec3 position;    // in is for varying data
 in layout(location=1) vec3 vertexColor;
-in layout(location=2) mat4 fullTransformMatrix;
+//in layout(location=2) mat4 fullTransformMatrix; // Use this to send over data via instance data
 
 //uniform vec3 dominatingColor; // the uniform keyword is for data that does not change, or is uniform
 //uniform float yFlip;
 
 //uniform mat4 modelTransformMatrix;
-//uniform mat4 fullTransformMatrix;
+uniform mat4 fullTransformMatrix; // Use this to send over data via a uniform
 
 out vec3 theColor;
 
