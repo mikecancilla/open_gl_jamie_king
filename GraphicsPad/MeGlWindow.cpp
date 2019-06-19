@@ -57,7 +57,8 @@ void MeGlWindow::sendDataToOpenGL()
 {
     //ShapeData shape = ShapeGenerator::makeTriangle();
     //ShapeData cube = ShapeGenerator::makeCube();
-    ShapeData cube = ShapeGenerator::makePlane();
+    //ShapeData cube = ShapeGenerator::makePlane();
+    ShapeData cube = ShapeGenerator::makeTeapot();
     ShapeData arrow = ShapeGenerator::makeArrow();
 
     GLCall(glGenBuffers(1, &theBufferID));
@@ -352,6 +353,12 @@ void MeGlWindow::initializeGL()
 
 	glewInit();
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+
+    //glCullFace(GL_BACK); // This is the default
+    //glCullFace(GL_FRONT);
+    //glCullFace(GL_FRONT_AND_BACK);
+
 
     sendDataToOpenGL();
     //setupVertexArrays();
