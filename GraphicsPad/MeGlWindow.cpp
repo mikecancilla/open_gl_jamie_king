@@ -39,6 +39,10 @@ GLuint planeIndexDataByteOffset;
 
 uint numTris = 1;
 
+#define PI 3.14159f
+
+#define RAD(x) ((x) * (PI) / 180.f)
+
 void GLClearError()
 {
     while (glGetError() != GL_NO_ERROR);
@@ -168,11 +172,15 @@ void MeGlWindow::paintGL()
     glm::mat4 worldToViewMatrix = camera.getWorldToViewMatrix();
     glm::mat4 worldToProjectionMatrix = viewToProjectionMatrix * worldToViewMatrix;
 
+    GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLight");
+    glm::vec3 ambientLight(0.5f, 0.5f, 0.1f);
+    glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+
     // Model 1
     GLCall(glBindVertexArray(teapotVertexArrayObjectID));
     glm::mat4 model1ToWorldMatrix = 
         glm::translate(glm::vec3(-3.f, 0.f, -6.f)) *
-        glm::rotate(-90.f, glm::vec3(1.f, 0.f, 0.f));
+        glm::rotate(RAD(-90.f), glm::vec3(1.f, 0.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * model1ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
@@ -182,7 +190,7 @@ void MeGlWindow::paintGL()
     // Model 2
     glm::mat4 model2ToWorldMatrix = 
         glm::translate(glm::vec3(3.f, 0.f, -6.75f)) *
-        glm::rotate(-90.f, glm::vec3(1.f, 0.f, 0.f));
+        glm::rotate(RAD(-90.f), glm::vec3(1.f, 0.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * model2ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice

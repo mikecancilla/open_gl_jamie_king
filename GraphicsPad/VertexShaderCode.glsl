@@ -9,6 +9,7 @@ in layout(location=1) vec3 vertexColor;
 
 //uniform mat4 modelTransformMatrix;
 uniform mat4 fullTransformMatrix; // Use this to send over data via a uniform
+uniform vec3 ambientLight;
 
 out vec3 theColor;
 
@@ -24,6 +25,6 @@ void main()
 
 //   gl_Position.y = gl_Position.y * yFlip;
 
-   theColor = vertexColor;  // varying data
+   theColor = vertexColor * ambientLight;  // varying data
 //   theColor = dominatingColor;  // uniform data
 }
