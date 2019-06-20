@@ -40,5 +40,6 @@ public:
     static ShapeData makeArrow();
     static ShapeData makePlane(GLuint dimensions = 10);
     static ShapeData makeTeapot(GLuint tesselation = 10, const glm::mat4& lidTransform = glm::mat4(1.f));
+    static ShapeData generateNormals(const ShapeData &data);
 };
 

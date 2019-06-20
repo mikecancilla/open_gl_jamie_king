@@ -28,6 +28,7 @@ ShapeData ShapeGenerator::makePlaneVerts(GLuint dimensions)
             thisVert.position.z = i - half;
             thisVert.position.y = 0;
             thisVert.color = randomColor();
+            thisVert.normal = glm::vec3(0, 1, 0);
         }
     }
 
@@ -72,11 +73,14 @@ ShapeData ShapeGenerator::makeTriangle()
     Vertex verts[] = {
         glm::vec3(0, 1, 0),
         glm::vec3(1, 0, 0),
+        glm::vec3(0, 0, 1),
 
         glm::vec3(-1, -1, 0),
         glm::vec3(0, 1, 0),
+        glm::vec3(0, 0, 1),
 
         glm::vec3(1, -1, 0),
+        glm::vec3(0, 0, 1),
         glm::vec3(0, 0, 1)
     };
 
@@ -101,57 +105,81 @@ ShapeData ShapeGenerator::makeCube()
     {
         glm::vec3(-1, 1, 1), // 0
         glm::vec3(1, 0, 0), // Color
+        glm::vec3(0, 1, 0), // Normal
         glm::vec3(1, 1, 1), // 1
         glm::vec3(0, 1, 0), // Color
+        glm::vec3(0, 1, 0), // Normal
         glm::vec3(1, 1, -1), // 2
         glm::vec3(0, 0, 1), // Color
+        glm::vec3(0, 1, 0), // Normal
         glm::vec3(-1, 1, -1), // 3
         glm::vec3(1, 1, 1), // Color
+        glm::vec3(0, 1, 0), // Normal
 
         glm::vec3(-1, 1, -1), // 4
         glm::vec3(1, 0, 1), // Color
+        glm::vec3(0, 1, 0), // Normal
         glm::vec3(1, 1, -1), // 5
         glm::vec3(0, .5, .2), // Color
+        glm::vec3(0, 1, 0), // Normal
         glm::vec3(1, -1, -1), // 6
         glm::vec3(.6, .8, .4), // Color
+        glm::vec3(0, 1, 0), // Normal
         glm::vec3(-1, -1, -1), // 7
         glm::vec3(.3, 1, .5), // Color
+        glm::vec3(0, 1, 0), // Normal
 
         glm::vec3(1, 1, -1), // 8
         glm::vec3(.2, .5, .2), // Color
+        glm::vec3(1, 0, 0), // Normal
         glm::vec3(1, 1, 1), // 9
         glm::vec3(.9, .3, .7), // Color
+        glm::vec3(1, 0, 0), // Normal
         glm::vec3(1, -1, 1), // 10
         glm::vec3(.3, .7, .5), // Color
+        glm::vec3(1, 0, 0), // Normal
         glm::vec3(1, -1, -1), // 11
         glm::vec3(.5, .7, .5), // Color
+        glm::vec3(1, 0, 0), // Normal
 
         glm::vec3(-1, 1, 1), // 12
         glm::vec3(.7, .8, .2), // Color
+        glm::vec3(-1, 0, 0), // Normal
         glm::vec3(-1, 1, -1), // 13
         glm::vec3(.5, .7, .3), // Color
+        glm::vec3(-1, 0, 0), // Normal
         glm::vec3(-1, -1, -1), // 14
         glm::vec3(.4, .7, .7), // Color
+        glm::vec3(-1, 0, 0), // Normal
         glm::vec3(-1, -1, 1), // 15
         glm::vec3(.2, .5, 1), // Color
+        glm::vec3(-1, 0, 0), // Normal
 
         glm::vec3(1, 1, 1), // 16
         glm::vec3(.6, 1, .7), // Color
+        glm::vec3(0, 0, 1), // Normal
         glm::vec3(-1, 1, 1), // 17
         glm::vec3(.6, .4, .8), // Color
+        glm::vec3(0, 0, 1), // Normal
         glm::vec3(-1, -1, 1), // 18
         glm::vec3(.2, .8, .7), // Color
+        glm::vec3(0, 0, 1), // Normal
         glm::vec3(1, -1, 1), // 19
         glm::vec3(.2, .7, 1), // Color
+        glm::vec3(0, 0, 1), // Normal
 
         glm::vec3(1, -1, -1), // 20
         glm::vec3(.8, .3, .7), // Color
+        glm::vec3(0, -1, 0), // Normal
         glm::vec3(-1, -1, -1), // 21
         glm::vec3(.8, .9, .5), // Color
+        glm::vec3(0, -1, 0), // Normal
         glm::vec3(-1, -1, 1), // 22
         glm::vec3(.5, .8, .5), // Color
+        glm::vec3(0, -1, 0), // Normal
         glm::vec3(1, -1, 1), // 23
         glm::vec3(.9, 1, .2), // Color
+        glm::vec3(0, -1, 0), // Normal
     };
 
     ret.numVertices = NUM_ARRAY_ELEMENTS(verts);
@@ -182,64 +210,104 @@ ShapeData ShapeGenerator::makeArrow()
 	Vertex verts[] =
 	{
 		// Top side of arrow head
-		glm::vec3(+0.00f, +0.25f, -0.25f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 0		 
+		glm::vec3(+0.00f, +0.25f, -0.25f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 0
+        glm::vec3(0, 1, 0),
 		glm::vec3(+0.50f, +0.25f, -0.25f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 1	  
+        glm::vec3(0, 1, 0),
 		glm::vec3(+0.00f, +0.25f, -1.00f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 2	  
+        glm::vec3(0, 1, 0),
 		glm::vec3(-0.50f, +0.25f, -0.25f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 3
+        glm::vec3(0, 1, 0),
 
 		// Bottom side of arrow head
 		glm::vec3(+0.00f, -0.25f, -0.25f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 4	  
+        glm::vec3(0, -1, 0),
 		glm::vec3(+0.50f, -0.25f, -0.25f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 5	 
+        glm::vec3(0, -1, 0),
 		glm::vec3(+0.00f, -0.25f, -1.00f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 6	  
+        glm::vec3(0, -1, 0),
 		glm::vec3(-0.50f, -0.25f, -0.25f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 7
+        glm::vec3(0, -1, 0),
 
 		// Right side of arrow tip
 		glm::vec3(+0.50f, +0.25f, -0.25f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 8	  
+        glm::vec3(0.83205032f, 0.00f, -0.55470026f),
 		glm::vec3(+0.00f, +0.25f, -1.00f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 9	  
+        glm::vec3(0.83205032f, 0.00f, -0.55470026f),
 		glm::vec3(+0.00f, -0.25f, -1.00f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 10  
+        glm::vec3(0.83205032f, 0.00f, -0.55470026f),
 		glm::vec3(+0.50f, -0.25f, -0.25f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 11
+        glm::vec3(0.83205032f, 0.00f, -0.55470026f),
 
 		// Left side of arrow tip
 		glm::vec3(+0.00f, +0.25f, -1.00f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 12	  
+        glm::vec3(-0.55708605f, 0.00f, -0.37139067f),
 		glm::vec3(-0.50f, +0.25f, -0.25f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 13  
+        glm::vec3(-0.55708605f, 0.00f, -0.37139067f),
 		glm::vec3(+0.00f, -0.25f, -1.00f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 14  
+        glm::vec3(-0.55708605f, 0.00f, -0.37139067f),
 		glm::vec3(-0.50f, -0.25f, -0.25f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 15
+        glm::vec3(-0.55708605f, 0.00f, -0.37139067f),
 
 		// Back side of arrow tip
 		glm::vec3(-0.50f, +0.25f, -0.25f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 16 		  
+        glm::vec3(0, 0, 1),
 		glm::vec3(+0.50f, +0.25f, -0.25f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 17  
+        glm::vec3(0, 0, 1),
 		glm::vec3(-0.50f, -0.25f, -0.25f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 18  
+        glm::vec3(0, 0, 1),
 		glm::vec3(+0.50f, -0.25f, -0.25f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 19
+        glm::vec3(0, 0, 1),
 
 		// Top side of back of arrow
 		glm::vec3(+0.25f, +0.25f, -0.25f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 20	  
+        glm::vec3(0, 1, 0),
 		glm::vec3(+0.25f, +0.25f, +1.00f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 21  
+        glm::vec3(0, 1, 0),
 		glm::vec3(-0.25f, +0.25f, +1.00f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 22  
+        glm::vec3(0, 1, 0),
 		glm::vec3(-0.25f, +0.25f, -0.25f), glm::vec3(+1.00f, +0.00f, +0.00f), //vertice 23 
+        glm::vec3(0, 1, 0),
 
 		// Bottom side of back of arrow
 		glm::vec3(+0.25f, -0.25f, -0.25f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 24	  
+        glm::vec3(0, -1, 0),
 		glm::vec3(+0.25f, -0.25f, +1.00f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 25 
+        glm::vec3(0, -1, 0),
 		glm::vec3(-0.25f, -0.25f, +1.00f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 26 
+        glm::vec3(0, -1, 0),
 		glm::vec3(-0.25f, -0.25f, -0.25f), glm::vec3(+0.00f, +0.00f, +1.00f), //vertice 27
+        glm::vec3(0, -1, 0),
 
 		// Right side of back of arrow
 		glm::vec3(+0.25f, +0.25f, -0.25f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 28	  
+        glm::vec3(1, 0, 0),
 		glm::vec3(+0.25f, -0.25f, -0.25f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 29  
+        glm::vec3(1, 0, 0),
 		glm::vec3(+0.25f, -0.25f, +1.00f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 30  
+        glm::vec3(1, 0, 0),
 		glm::vec3(+0.25f, +0.25f, +1.00f), glm::vec3(+0.60f, +1.00f, +0.00f), //vertice 31
+        glm::vec3(1, 0, 0),
 
 		// Left side of back of arrow
 		glm::vec3(-0.25f, +0.25f, -0.25f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 32		  
+        glm::vec3(-1, 0, 0),
 		glm::vec3(-0.25f, -0.25f, -0.25f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 33	 
+        glm::vec3(-1, 0, 0),
 		glm::vec3(-0.25f, -0.25f, +1.00f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 34  
+        glm::vec3(-1, 0, 0),
 		glm::vec3(-0.25f, +0.25f, +1.00f), glm::vec3(+0.00f, +1.00f, +0.00f), //vertice 35  
+        glm::vec3(-1, 0, 0),
 	
 		// Back side of back of arrow
 		glm::vec3(-0.25f, +0.25f, +1.00f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 36  
+        glm::vec3(0, 0, 1),
 		glm::vec3(+0.25f, +0.25f, +1.00f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 37  
+        glm::vec3(0, 0, 1),
 		glm::vec3(-0.25f, -0.25f, +1.00f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 38 
+        glm::vec3(0, 0, 1),
 		glm::vec3(+0.25f, -0.25f, +1.00f), glm::vec3(+0.50f, +0.50f, +0.50f), //vertice 39  
+        glm::vec3(0, 0, 1)
 	};
 
 	ret.numVertices = NUM_ARRAY_ELEMENTS(verts);
@@ -310,13 +378,37 @@ ShapeData ShapeGenerator::makeTeapot(GLuint tesselation, const glm::mat4 & lidTr
 		v.position.x = vertices[i * 3 + 0];
 		v.position.y = vertices[i * 3 + 1];
 		v.position.z = vertices[i * 3 + 2];
-		//v.normal.x = normals[i * 3 + 0];
-		//v.normal.y = normals[i * 3 + 1];
-		//v.normal.z = normals[i * 3 + 2];
+		v.normal.x = normals[i * 3 + 0];
+		v.normal.y = normals[i * 3 + 1];
+		v.normal.z = normals[i * 3 + 2];
 		v.color = randomColor();
 	}
 
     return ret;
+}
+
+ShapeData ShapeGenerator::generateNormals(const ShapeData & data)
+{
+	ShapeData ret;
+	ret.numVertices = data.numVertices * 2;
+	ret.vertices = new Vertex[ret.numVertices];
+	glm::vec3 white(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < data.numVertices; i++)
+	{
+		GLuint vertIndex = i * 2;
+		Vertex& v1 = ret.vertices[vertIndex];
+		Vertex& v2 = ret.vertices[vertIndex + 1];
+		const Vertex& sourceVertex = data.vertices[i];
+		v1.position = sourceVertex.position;
+		v2.position = sourceVertex.position + sourceVertex.normal;
+		v1.color = v2.color = white;
+	}
+
+	ret.numIndices = ret.numVertices;
+	ret.indices = new GLushort[ret.numIndices];
+	for (int i = 0; i < ret.numIndices; i++)
+		ret.indices[i] = i;
+	return ret;
 }
 
 void ShapeGenerator::generatePatches(float * v, float * n, float * tc, unsigned short* el, int grid)
