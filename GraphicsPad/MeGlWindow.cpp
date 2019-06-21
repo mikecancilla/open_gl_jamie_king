@@ -266,7 +266,11 @@ void MeGlWindow::paintGL()
 
     GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLight");
     glm::vec3 ambientLight(1.f, 1.f, 1.f);
-    glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]);
+    GLCall(glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]));
+
+    GLint lightPositionUniformLocation = glGetUniformLocation(programID, "lightPosition");
+    glm::vec3 lightPosition(0, 1, 0);
+    GLCall(glUniform3fv(lightPositionUniformLocation, 1, &lightPosition[0]));
 
     // Model 1
     GLCall(glBindVertexArray(teapotVertexArrayObjectID));
@@ -277,7 +281,7 @@ void MeGlWindow::paintGL()
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
     GLCall(glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
-    GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
+    //GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
     //glBindVertexArray(teapotNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
 
@@ -290,7 +294,7 @@ void MeGlWindow::paintGL()
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-    GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
+    //GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
     //glBindVertexArray(teapotNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
 
@@ -301,7 +305,7 @@ void MeGlWindow::paintGL()
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-    GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
+    //GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
     //glBindVertexArray(arrowNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, arrowNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)arrowNormalsIndexDataByteOffset);
 
@@ -408,13 +412,13 @@ void MeGlWindow::installShaders()
     const char* adapter[1];
     std::string temp = readShaderCode("VertexShaderCode.glsl");
     adapter[0] = temp.c_str();
-    glShaderSource(vertexShaderID, 1, adapter, 0);
+    GLCall(glShaderSource(vertexShaderID, 1, adapter, 0));
     temp = readShaderCode("FragmentShaderCode.glsl");
     adapter[0] = temp.c_str();
-    glShaderSource(fragmentShaderID, 1, adapter, 0);
+    GLCall(glShaderSource(fragmentShaderID, 1, adapter, 0));
 
-    glCompileShader(vertexShaderID);
-    glCompileShader(fragmentShaderID);
+    GLCall(glCompileShader(vertexShaderID));
+    GLCall(glCompileShader(fragmentShaderID));
 
     if (!checkShaderStatus(vertexShaderID) ||
         !checkShaderStatus(fragmentShaderID))
@@ -422,8 +426,8 @@ void MeGlWindow::installShaders()
 
     programID = glCreateProgram();
 
-    glAttachShader(programID, vertexShaderID);
-    glAttachShader(programID, fragmentShaderID);
+    GLCall(glAttachShader(programID, vertexShaderID));
+    GLCall(glAttachShader(programID, fragmentShaderID));
 
 	// The preferred way to set shader variable locations is in shader code,
 	//  but if your version of OpenGL does not support setting shader variable locations,
@@ -432,7 +436,7 @@ void MeGlWindow::installShaders()
 	// Way 1: Optional way to SET the location of a shader variable.  Must do before linking
 	//glBindAttribLocation(programID, 2, "position");
 
-	glLinkProgram(programID);
+	GLCall(glLinkProgram(programID));
    
 	if( !checkProgramStatus(programID) )
         return;
@@ -442,8 +446,8 @@ void MeGlWindow::installShaders()
 	//GLint colorLocation = glGetAttribLocation(programID, "vertexColor");
 	//GLint transformLocation = glGetAttribLocation(programID, "fullTransformMatrix");
 
-	glDeleteShader(vertexShaderID);
-    glDeleteShader(fragmentShaderID);
+	GLCall(glDeleteShader(vertexShaderID));
+    GLCall(glDeleteShader(fragmentShaderID));
 
     GLCall(glUseProgram(programID));
 }
@@ -491,8 +495,8 @@ void MeGlWindow::initializeGL()
 	setMouseTracking(true);
 
 	glewInit();
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    GLCall(glEnable(GL_DEPTH_TEST));
+    GLCall(glEnable(GL_CULL_FACE));
 
     //glCullFace(GL_BACK); // This is the default
     //glCullFace(GL_FRONT);
