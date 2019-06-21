@@ -9,14 +9,14 @@ in layout(location=2) vec3 normal; // Use this to send over data via instance da
 //uniform float yFlip;
 
 uniform vec3 ambientLight;
-uniform vec3 lightPosition;
 uniform mat4 fullTransformMatrix; // Use this to send over data via a uniform
 
-out vec3 theColor;
+//out vec3 theColor;
+out vec3 theNormal;
+out vec3 thePosition;
 
 void main()
 {
-    
     //gl_Position = vec4(position, 1.0);
 
     vec4 v = vec4(position, 1.0);
@@ -28,14 +28,16 @@ void main()
 //    gl_Position.y = gl_Position.y * yFlip;
 
     // Diffuse lighting
-    vec3 lightVector = normalize(lightPosition - position);
-    float diffuseLight = dot(lightVector, normal);
+//    vec3 lightVector = normalize(lightPosition - position);
+//    float diffuseLight = dot(lightVector, normal);
 
     // Output Color
 //    theColor = vec3(gl_Position);
 //    theColor = position;
 //    theColor = normal;
-    theColor = vec3(diffuseLight, diffuseLight, diffuseLight);  // varying data
+//    theColor = vec3(diffuseLight, diffuseLight, diffuseLight);  // varying data
 //    theColor = vertexColor * ambientLight * diffuseLight;  // varying data
 //    theColor = dominatingColor;  // uniform data
+    theNormal = normal;
+    thePosition = position;
 }
