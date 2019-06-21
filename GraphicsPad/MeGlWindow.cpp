@@ -141,11 +141,11 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glBindVertexArray(teapotVertexArrayObjectID));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glEnableVertexAttribArray(1));
-    //GLCall(glEnableVertexAttribArray(2));
+    GLCall(glEnableVertexAttribArray(2));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, theBufferID));
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, 0));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 3)));
-    //GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 6)));
+    GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(sizeof(float) * 6)));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferID));
 
     // Setup an arrow vertex array object
@@ -153,11 +153,11 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, theBufferID));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glEnableVertexAttribArray(1));
-    //GLCall(glEnableVertexAttribArray(2));
+    GLCall(glEnableVertexAttribArray(2));
     GLuint arrowByteOffset = teapot.vertexBufferSize() + teapot.indexBufferSize();
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowByteOffset)));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowByteOffset + sizeof(float) * 3)));
-    //GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowByteOffset + sizeof(float) * 6)));
+    GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowByteOffset + sizeof(float) * 6)));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferID));
 
     // Setup a plane vertex array object
@@ -165,11 +165,11 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, theBufferID));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glEnableVertexAttribArray(1));
-    //GLCall(glEnableVertexAttribArray(2));
+    GLCall(glEnableVertexAttribArray(2));
     GLuint planeByteOffset = arrowByteOffset + arrow.vertexBufferSize() + arrow.indexBufferSize();
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeByteOffset)));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeByteOffset + sizeof(float) * 3)));
-    //GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeByteOffset + sizeof(float) * 6)));
+    GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeByteOffset + sizeof(float) * 6)));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferID));
 
     // Teapot normals
@@ -177,11 +177,11 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, theBufferID));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glEnableVertexAttribArray(1));
-    //GLCall(glEnableVertexAttribArray(2));
+    GLCall(glEnableVertexAttribArray(2));
     GLuint teapotNormalsByteOffset = planeByteOffset + plane.vertexBufferSize() + plane.indexBufferSize();
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(teapotNormalsByteOffset)));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(teapotNormalsByteOffset + sizeof(float) * 3)));
-    //GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(teapotNormalsByteOffset + sizeof(float) * 6)));
+    GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(teapotNormalsByteOffset + sizeof(float) * 6)));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferID));
 
     // Arrow normals
@@ -189,11 +189,11 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, theBufferID));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glEnableVertexAttribArray(1));
-    //GLCall(glEnableVertexAttribArray(2));
+    GLCall(glEnableVertexAttribArray(2));
     GLuint arrowNormalsByteOffset = teapotNormalsByteOffset + teapotNormals.vertexBufferSize() + teapotNormals.indexBufferSize();
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowNormalsByteOffset)));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowNormalsByteOffset + sizeof(float) * 3)));
-    //GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowNormalsByteOffset + sizeof(float) * 6)));
+    GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(arrowNormalsByteOffset + sizeof(float) * 6)));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferID));
 
     // Plane normals
@@ -201,11 +201,11 @@ void MeGlWindow::sendDataToOpenGL()
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, theBufferID));
     GLCall(glEnableVertexAttribArray(0));
     GLCall(glEnableVertexAttribArray(1));
-    //GLCall(glEnableVertexAttribArray(2));
+    GLCall(glEnableVertexAttribArray(2));
     GLuint planeNormalsByteOffset = arrowNormalsByteOffset + arrowNormals.vertexBufferSize() + arrowNormals.indexBufferSize();
     GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeNormalsByteOffset)));
     GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeNormalsByteOffset + sizeof(float) * 3)));
-    //GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeNormalsByteOffset + sizeof(float) * 6)));
+    GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, VERTEX_BYTE_SIZE, (void*)(planeNormalsByteOffset + sizeof(float) * 6)));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, theBufferID));
 
     teapotIndexDataByteOffset = teapot.vertexBufferSize();
@@ -272,38 +272,38 @@ void MeGlWindow::paintGL()
     GLCall(glBindVertexArray(teapotVertexArrayObjectID));
     glm::mat4 model1ToWorldMatrix = 
         glm::translate(glm::vec3(-3.f, 0.f, -6.f)) *
-        glm::rotate(RAD(-90.f), glm::vec3(1.f, 0.f, 0.f));
+        glm::rotate(RAD(0.f), glm::vec3(1.f, 0.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * model1ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
     GLCall(glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
     GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
-    glBindVertexArray(teapotNormalsVertexArrayObjectID);
-    glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
+    //glBindVertexArray(teapotNormalsVertexArrayObjectID);
+    //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
 
     // Model 2
     GLCall(glBindVertexArray(teapotVertexArrayObjectID));
     glm::mat4 model2ToWorldMatrix = 
         glm::translate(glm::vec3(3.f, 0.f, -6.75f)) *
-        glm::rotate(RAD(-90.f), glm::vec3(1.f, 0.f, 0.f));
+        glm::rotate(RAD(0.f), glm::vec3(1.f, 0.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * model2ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
-    glBindVertexArray(teapotNormalsVertexArrayObjectID);
-    glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
+    //glBindVertexArray(teapotNormalsVertexArrayObjectID);
+    //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
 
     // Arrow
     GLCall(glBindVertexArray(arrowVertexArrayObjectID));
-    glm::mat4 arrowModelToWorldMatrix = glm::translate(glm::vec3(0.f, 0.f, -3.f));
+    glm::mat4 arrowModelToWorldMatrix = glm::translate(glm::vec3(0.f, 2.f, -3.f));
     fullTransformMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
-    glBindVertexArray(arrowNormalsVertexArrayObjectID);
-    glDrawElements(GL_LINES, arrowNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)arrowNormalsIndexDataByteOffset);
+    //glBindVertexArray(arrowNormalsVertexArrayObjectID);
+    //glDrawElements(GL_LINES, arrowNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)arrowNormalsIndexDataByteOffset);
 
     // Plane
     GLCall(glBindVertexArray(planeVertexArrayObjectID));
@@ -313,8 +313,8 @@ void MeGlWindow::paintGL()
     // And DrawElements is called twice
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexDataByteOffset));
-    glBindVertexArray(planeNormalsVertexArrayObjectID);
-    glDrawElements(GL_LINES, planeNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)planeNormalsIndexDataByteOffset);
+    //glBindVertexArray(planeNormalsVertexArrayObjectID);
+    //glDrawElements(GL_LINES, planeNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)planeNormalsIndexDataByteOffset);
 }
 
 void MeGlWindow::mouseMoveEvent(QMouseEvent *e)
