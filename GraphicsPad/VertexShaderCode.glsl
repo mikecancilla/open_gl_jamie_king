@@ -10,6 +10,7 @@ in layout(location=2) vec3 normal; // Use this to send over data via instance da
 
 uniform vec3 ambientLight;
 uniform mat4 fullTransformMatrix; // Use this to send over data via a uniform
+uniform mat4 modelToWorldTransformMatrix;
 
 //out vec3 theColor;
 out vec3 theNormal;
@@ -38,6 +39,13 @@ void main()
 //    theColor = vec3(diffuseLight, diffuseLight, diffuseLight);  // varying data
 //    theColor = vertexColor * ambientLight * diffuseLight;  // varying data
 //    theColor = dominatingColor;  // uniform data
-    theNormal = normal;
-    thePosition = position;
+
+//    theNormal = normal;
+    // DO NOT TRANSLATE THE NORMAL, just rotate it.
+    // Set the 4th parameter to 0 cancel out the translation value
+    // If we were to scale our model, then we would have to re-normalize
+    // If we did a non-uniform scale, well, there would be more to do
+    theNormal = vec3(modelToWorldTransformMatrix * vec4(normal, 0));
+//    thePosition = position;
+    thePosition = vec3(modelToWorldTransformMatrix * v);
 }

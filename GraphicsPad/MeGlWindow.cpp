@@ -259,9 +259,8 @@ void MeGlWindow::paintGL()
 
     // Slower way using Uniforms instead of instance data
 
-	glm::mat4 fullTransformMatrix;
-    glm::mat4 viewToProjectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 20.f);
     glm::mat4 worldToViewMatrix = camera.getWorldToViewMatrix();
+    glm::mat4 viewToProjectionMatrix = glm::perspective(45.2f, ((float)width()) / height(), 0.1f, 20.f);
     glm::mat4 worldToProjectionMatrix = viewToProjectionMatrix * worldToViewMatrix;
 
     GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLight");
@@ -277,6 +276,8 @@ void MeGlWindow::paintGL()
     glm::mat4 model1ToWorldMatrix = 
         glm::translate(glm::vec3(-3.f, 0.f, -6.f)) *
         glm::rotate(RAD(0.f), glm::vec3(1.f, 0.f, 0.f));
+
+	glm::mat4 fullTransformMatrix;
     fullTransformMatrix = worldToProjectionMatrix * model1ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
@@ -298,16 +299,28 @@ void MeGlWindow::paintGL()
     //glBindVertexArray(teapotNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
 
-    // Arrow
+    GLint modelToWorldTransformMatrixUniformLocation =
+        glGetUniformLocation(programID, "modelToWorldTransformMatrix");
+
+    // Arrow Translated
     GLCall(glBindVertexArray(arrowVertexArrayObjectID));
-    glm::mat4 arrowModelToWorldMatrix = glm::translate(glm::vec3(0.f, 2.f, -3.f));
+    glm::mat4 arrowModelToWorldMatrix = glm::translate(glm::vec3(0.f, 2.f, -8.f)) *
+        glm::rotate(-90.f, glm::vec3(1.f, 0.f, 0.f));
     fullTransformMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
+    glUniformMatrix4fv(modelToWorldTransformMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
-    //GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
+    GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
     //glBindVertexArray(arrowNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, arrowNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)arrowNormalsIndexDataByteOffset);
+
+    // Arrow Centered
+    arrowModelToWorldMatrix = glm::mat4(1.f);
+    fullTransformMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
+    glUniformMatrix4fv(modelToWorldTransformMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
+    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+    GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
 
     // Plane
     GLCall(glBindVertexArray(planeVertexArrayObjectID));
@@ -315,6 +328,7 @@ void MeGlWindow::paintGL()
     fullTransformMatrix = worldToProjectionMatrix * planeModelToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
+    glUniformMatrix4fv(modelToWorldTransformMatrixUniformLocation, 1, GL_FALSE, &planeModelToWorldMatrix[0][0]);
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexDataByteOffset));
     //glBindVertexArray(planeNormalsVertexArrayObjectID);
