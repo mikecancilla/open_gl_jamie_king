@@ -267,9 +267,9 @@ void MeGlWindow::paintGL()
     glm::vec3 ambientLight(1.f, 1.f, 1.f);
     GLCall(glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]));
 
-    GLint lightPositionUniformLocation = glGetUniformLocation(programID, "lightPosition");
-    glm::vec3 lightPosition(0, 1, 0);
-    GLCall(glUniform3fv(lightPositionUniformLocation, 1, &lightPosition[0]));
+    GLint lightPositionUniformLocation = glGetUniformLocation(programID, "lightPositionWorld");
+    glm::vec3 lightPositionWorld(0, 1, 0);
+    GLCall(glUniform3fv(lightPositionUniformLocation, 1, &lightPositionWorld[0]));
 
     // Model 1
     GLCall(glBindVertexArray(teapotVertexArrayObjectID));
@@ -277,11 +277,11 @@ void MeGlWindow::paintGL()
         glm::translate(glm::vec3(-3.f, 0.f, -6.f)) *
         glm::rotate(RAD(0.f), glm::vec3(1.f, 0.f, 0.f));
 
-	glm::mat4 fullTransformMatrix;
-    fullTransformMatrix = worldToProjectionMatrix * model1ToWorldMatrix;
+	glm::mat4 modelToProjectionMatrix;
+    modelToProjectionMatrix = worldToProjectionMatrix * model1ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
-    GLCall(glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]));
+    GLCall(glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]));
     //GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
     //glBindVertexArray(teapotNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
@@ -291,45 +291,45 @@ void MeGlWindow::paintGL()
     glm::mat4 model2ToWorldMatrix = 
         glm::translate(glm::vec3(3.f, 0.f, -6.75f)) *
         glm::rotate(RAD(0.f), glm::vec3(1.f, 0.f, 0.f));
-    fullTransformMatrix = worldToProjectionMatrix * model2ToWorldMatrix;
+    modelToProjectionMatrix = worldToProjectionMatrix * model2ToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
-    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
     //GLCall(glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexDataByteOffset));
     //glBindVertexArray(teapotNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, teapotNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)teapotNormalsIndexDataByteOffset);
 
-    GLint modelToWorldTransformMatrixUniformLocation =
-        glGetUniformLocation(programID, "modelToWorldTransformMatrix");
+    GLint modelToWorldMatrixUniformLocation =
+        glGetUniformLocation(programID, "modelToWorldMatrix");
 
     // Arrow Translated
     GLCall(glBindVertexArray(arrowVertexArrayObjectID));
     glm::mat4 arrowModelToWorldMatrix = glm::translate(glm::vec3(0.f, 2.f, -8.f)) *
         glm::rotate(-90.f, glm::vec3(1.f, 0.f, 0.f));
-    fullTransformMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
+    modelToProjectionMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
-    glUniformMatrix4fv(modelToWorldTransformMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
-    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+    glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
+    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
     //glBindVertexArray(arrowNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, arrowNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)arrowNormalsIndexDataByteOffset);
 
     // Arrow Centered
     arrowModelToWorldMatrix = glm::mat4(1.f);
-    fullTransformMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
-    glUniformMatrix4fv(modelToWorldTransformMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
-    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+    modelToProjectionMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
+    glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
+    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexDataByteOffset));
 
     // Plane
     GLCall(glBindVertexArray(planeVertexArrayObjectID));
     glm::mat4 planeModelToWorldMatrix = glm::mat4(1.f);
-    fullTransformMatrix = worldToProjectionMatrix * planeModelToWorldMatrix;
+    modelToProjectionMatrix = worldToProjectionMatrix * planeModelToWorldMatrix;
     // Less optimal using uniforms because we have to send the data down each time
     // And DrawElements is called twice
-    glUniformMatrix4fv(modelToWorldTransformMatrixUniformLocation, 1, GL_FALSE, &planeModelToWorldMatrix[0][0]);
-    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &fullTransformMatrix[0][0]);
+    glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &planeModelToWorldMatrix[0][0]);
+    glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
     GLCall(glDrawElements(GL_TRIANGLES, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexDataByteOffset));
     //glBindVertexArray(planeNormalsVertexArrayObjectID);
     //glDrawElements(GL_LINES, planeNormalsNumIndices, GL_UNSIGNED_SHORT, (void*)planeNormalsIndexDataByteOffset);
@@ -458,7 +458,7 @@ void MeGlWindow::installShaders()
 	// Way 2: Optional way to get the layout location of a variable in the shader, let the linker decide
 	//GLint positionLocation = glGetAttribLocation(programID, "position");
 	//GLint colorLocation = glGetAttribLocation(programID, "vertexColor");
-	//GLint transformLocation = glGetAttribLocation(programID, "fullTransformMatrix");
+	//GLint transformLocation = glGetAttribLocation(programID, "modelToProjectionMatrix");
 
 	GLCall(glDeleteShader(vertexShaderID));
     GLCall(glDeleteShader(fragmentShaderID));
@@ -521,5 +521,5 @@ void MeGlWindow::initializeGL()
     //setupVertexArrays();
     installShaders();
 
-    fullTransformUniformLocation = glGetUniformLocation(programID, "fullTransformMatrix");
+    fullTransformUniformLocation = glGetUniformLocation(programID, "modelToProjectionMatrix");
 }
