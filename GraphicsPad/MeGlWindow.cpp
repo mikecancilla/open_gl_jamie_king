@@ -264,7 +264,7 @@ void MeGlWindow::paintGL()
 
 	glUseProgram(programID);
 	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLight");
-	glm::vec4 ambientLight(0.05f, 0.05f, 0.05f, 1.0f);
+	glm::vec4 ambientLight(0.0f, 0.0f, 0.05f, 1.0f);
 	glUniform4fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	GLint eyePositionWorldUniformLocation = glGetUniformLocation(programID, "eyePositionWorld");
 	glm::vec3 eyePosition = camera.getPosition();
@@ -323,15 +323,15 @@ void MeGlWindow::paintGL()
 		&sphereModelToWorldMatrix[0][0]);
 	glDrawElements(GL_TRIANGLES, sphereNumIndices, GL_UNSIGNED_SHORT, (void*)sphereIndexByteOffset);
 
-/*
-// Torus
+    // Torus
 	GLCall(glBindVertexArray(torusVertexArrayObjectID));
-	glm::mat4 torusModelToWorldMatrix = glm::translate(glm::vec3(2.0f, 2.0f, 2.0f));
+	glm::mat4 torusModelToWorldMatrix = glm::translate(glm::vec3(1.0f, 0.5f, 2.0f));
 	modelToProjectionMatrix = worldToProjectionMatrix * torusModelToWorldMatrix;
 	GLCall(glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]));
 	GLCall(glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &torusModelToWorldMatrix[0][0]));
 	GLCall(glDrawElements(GL_TRIANGLES, torusNumIndices, GL_UNSIGNED_SHORT, (void*)torusIndexByteOffset));
 
+    /*
     // Cube light
 	glBindVertexArray(cubeVertexArrayObjectID);
 	cubeModelToWorldMatrix =
@@ -344,7 +344,7 @@ void MeGlWindow::paintGL()
 	modelToWorldMatrixUniformLocation = glGetUniformLocation(programID, "modelToWorldMatrix");
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &cubeModelToWorldMatrix[0][0]);
 	glDrawElements(GL_TRIANGLES, cubeNumIndices, GL_UNSIGNED_SHORT, (void*)cubeIndexByteOffset);
-*/
+    */
 }
 
 void MeGlWindow::mouseMoveEvent(QMouseEvent *e)
