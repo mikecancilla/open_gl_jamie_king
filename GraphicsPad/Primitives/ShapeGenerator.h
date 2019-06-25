@@ -5,6 +5,7 @@ class ShapeGenerator
 {
     static ShapeData makePlaneVerts(GLuint dimensions);
     static ShapeData makePlaneIndices(GLuint dimensions);
+    static ShapeData makePlaneUnseamedIndices(GLuint tesselation);
 
 	// Teapot helpers
 	static void generatePatches(float * v, float * n, float * tc, unsigned short* el, int grid);
@@ -40,6 +41,8 @@ public:
     static ShapeData makeArrow();
     static ShapeData makePlane(GLuint dimensions = 10);
     static ShapeData makeTeapot(GLuint tesselation = 10, const glm::mat4& lidTransform = glm::mat4(1.f));
+    static ShapeData makeSphere(GLuint tesselation = 20);
+	static ShapeData makeTorus(GLuint tesselation = 20);
     static ShapeData generateNormals(const ShapeData &data);
 };
 

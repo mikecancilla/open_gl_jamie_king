@@ -11,7 +11,7 @@ in layout(location=2) vec3 normalModel; // Use this to send over data via instan
 uniform mat4 modelToProjectionMatrix; // MVP, Use this to send over data via a uniform
 uniform mat4 modelToWorldMatrix;
 
-//out vec3 theColor;
+out vec3 theColor;
 out vec3 normalWorld;
 out vec3 vertexPositionWorld;
 
@@ -38,6 +38,7 @@ void main()
 //    theColor = vec3(diffuseLight, diffuseLight, diffuseLight);  // varying data
 //    theColor = vertexColor * ambientLight * diffuseLight;  // varying data
 //    theColor = dominatingColor;  // uniform data
+    theColor = vertexColor;  // varying data
 
 //    theNormal = normal;
     // DO NOT TRANSLATE THE NORMAL, just rotate it.

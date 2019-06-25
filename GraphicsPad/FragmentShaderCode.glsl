@@ -1,5 +1,6 @@
 #version 430
 
+in vec3 theColor;
 in vec3 normalWorld;
 in vec3 vertexPositionWorld;
 
@@ -14,13 +15,17 @@ void main()
     // Diffuse lighting
     vec3 lightVectorWorld = normalize(lightPositionWorld - vertexPositionWorld);
     float diffuseBrightness = dot(lightVectorWorld, normalize(normalWorld));
+    diffuseBrightness = pow(diffuseBrightness, 15);
     vec4 diffuseLight = vec4(diffuseBrightness, diffuseBrightness, diffuseBrightness, 1.0);  // varying data
 
     // Specular lighting
     vec3 reflectedLightVectorWorld = reflect(-lightVectorWorld, normalWorld);
     vec3 eyeVectorWorld = normalize(eyePositionWorld - vertexPositionWorld);
     float s = dot(reflectedLightVectorWorld, eyeVectorWorld);
+    s = pow(s, 50);
     vec4 specularLight = vec4(s, s, s, 1);
 
-    daColor = ambientLight + clamp(diffuseLight, 0, 1) + clamp(specularLight, 0, 1);
+//    daColor = ambientLight + clamp(diffuseLight, 0, 1) + clamp(specularLight, 0, 1);
+    daColor = vec4(theColor, 1.0) + ambientLight + clamp(diffuseLight, 0, 1) + clamp(specularLight, 0, 1);
+    //daColor = clamp(specularLight, 0, 1);
 }

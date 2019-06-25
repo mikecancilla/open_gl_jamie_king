@@ -2,6 +2,9 @@
 
 #include <gl/glew.h>
 #include <QtOpenGL\QGLWidget>
+#include <string>
+
+//class MyModel;
 
 #define ASSERT(x) if(!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
@@ -13,27 +16,25 @@ bool GLLogCall(const char* function, const char* file, int line);
 
 class MeGlWindow : public QGLWidget
 {
-protected:
-	void initializeGL() override;
-	void paintGL() override;
-	void mouseMoveEvent(QMouseEvent* e) override;
-	void keyPressEvent(QKeyEvent* e) override;
-
 	void sendDataToOpenGL();
-
-	std::string readShaderCode(const char* fileName);
-    void installShaders();
-    //void setupVertexArrays();
-
-	bool checkStatus(GLuint objectID,
-                     PFNGLGETSHADERIVPROC objectPropertyGetterFunc,
-                     PFNGLGETSHADERINFOLOGPROC getInfoLogFunc,
-                     GLenum statusType);
 	bool checkShaderStatus(GLuint shaderID);
-    bool checkProgramStatus(GLuint programID);
+	bool checkProgramStatus(GLuint programID);
+	bool checkStatus(
+		GLuint objectID,
+		PFNGLGETSHADERIVPROC objectPropertyGetterFunc,
+		PFNGLGETSHADERINFOLOGPROC getInfoLogFunc,
+		GLenum statusType);
+	std::string readShaderCode(const char* fileName);
+	void installShaders();
+	//MyModel* theModel;
+
+protected:
+	void initializeGL();
+	void paintGL();
+	void mouseMoveEvent(QMouseEvent*);
+	void keyPressEvent(QKeyEvent*);
 
 public:
-	MeGlWindow();
-	virtual ~MeGlWindow();
+	MeGlWindow(/*MyModel* theModel*/);
+	~MeGlWindow();
 };
-
