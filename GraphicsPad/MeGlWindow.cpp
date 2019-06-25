@@ -264,8 +264,8 @@ void MeGlWindow::paintGL()
     glm::mat4 worldToProjectionMatrix = viewToProjectionMatrix * worldToViewMatrix;
 
     GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLight");
-    glm::vec3 ambientLight(1.f, 1.f, 1.f);
-    GLCall(glUniform3fv(ambientLightUniformLocation, 1, &ambientLight[0]));
+    glm::vec4 ambientLight(0.05f, 0.05f, 0.05f, 1.0f);
+    GLCall(glUniform4fv(ambientLightUniformLocation, 1, &ambientLight[0]));
 
     GLint lightPositionUniformLocation = glGetUniformLocation(programID, "lightPositionWorld");
     glm::vec3 lightPositionWorld(0, 1, 0);

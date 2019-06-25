@@ -8,7 +8,6 @@ in layout(location=2) vec3 normalModel; // Use this to send over data via instan
 //uniform vec3 dominatingColor; // the uniform keyword is for data that does not change, or is uniform
 //uniform float yFlip;
 
-uniform vec3 ambientLight;
 uniform mat4 modelToProjectionMatrix; // MVP, Use this to send over data via a uniform
 uniform mat4 modelToWorldMatrix;
 
