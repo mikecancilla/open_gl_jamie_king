@@ -53,6 +53,11 @@ glm::mat4 Camera::getWorldToViewMatrix() const
 	return glm::lookAt(position, position + viewDirection, UP);
 }
 
+glm::vec3 Camera::getPosition()
+{
+    return position;
+}
+
 void Camera::moveForward()
 {
 	position += MOVEMENT_SPEED * viewDirection;

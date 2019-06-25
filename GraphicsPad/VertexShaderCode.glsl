@@ -44,7 +44,12 @@ void main()
     // Set the 4th parameter to 0 cancel out the translation value
     // If we were to scale our model, then we would have to re-normalize
     // If we did a non-uniform scale, well, there would be more to do
+
     normalWorld = vec3(modelToWorldMatrix * vec4(normalModel, 0));
+
+    // Averaging the surface normals. Treat the normals as a vector from the center.
+    //normalWorld = vec3(modelToWorldMatrix * normalize(vertexPositionModel));
+
 //    thePosition = position;
     vertexPositionWorld = vec3(modelToWorldMatrix * vertexPositionModel);
 }

@@ -20,6 +20,7 @@ const uint TRIANGLE_BYTE_SIZE = NUM_VERTICIES_PER_TRI * VERTEX_BYTE_SIZE;
 const uint MAX_TRIS = 20;
 
 GLuint programID;
+GLuint passThroughProgramID;
 Camera camera;
 GLint fullTransformUniformLocation;
 
@@ -267,8 +268,12 @@ void MeGlWindow::paintGL()
     glm::vec4 ambientLight(0.05f, 0.05f, 0.05f, 1.0f);
     GLCall(glUniform4fv(ambientLightUniformLocation, 1, &ambientLight[0]));
 
+    GLint eyePositionWorldUniformLocation = glGetUniformLocation(programID, "eyePositionWorld");
+    glm::vec3 eyePosition = camera.getPosition();
+    GLCall(glUniform3fv(eyePositionWorldUniformLocation, 1, &eyePosition[0]));
+
     GLint lightPositionUniformLocation = glGetUniformLocation(programID, "lightPositionWorld");
-    glm::vec3 lightPositionWorld(0, 1, 0);
+    glm::vec3 lightPositionWorld(0, 2, 0);
     GLCall(glUniform3fv(lightPositionUniformLocation, 1, &lightPositionWorld[0]));
 
     // Model 1
@@ -459,6 +464,35 @@ void MeGlWindow::installShaders()
 	//GLint positionLocation = glGetAttribLocation(programID, "position");
 	//GLint colorLocation = glGetAttribLocation(programID, "vertexColor");
 	//GLint transformLocation = glGetAttribLocation(programID, "modelToProjectionMatrix");
+
+	GLCall(glDeleteShader(vertexShaderID));
+    GLCall(glDeleteShader(fragmentShaderID));
+
+    GLCall(vertexShaderID = glCreateShader(GL_VERTEX_SHADER));
+    GLCall(fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER));
+
+    temp = readShaderCode("VertexShaderPassThroughCode.glsl");
+    adapter[0] = temp.c_str();
+    GLCall(glShaderSource(vertexShaderID, 1, adapter, 0));
+    temp = readShaderCode("FragmentShaderPassThroughCode.glsl");
+    adapter[0] = temp.c_str();
+    GLCall(glShaderSource(fragmentShaderID, 1, adapter, 0));
+
+    GLCall(glCompileShader(vertexShaderID));
+    GLCall(glCompileShader(fragmentShaderID));
+
+    if (!checkShaderStatus(vertexShaderID) ||
+        !checkShaderStatus(fragmentShaderID))
+        return;
+
+    passThroughProgramID = glCreateProgram();
+
+    GLCall(glAttachShader(passThroughProgramID, vertexShaderID));
+    GLCall(glAttachShader(passThroughProgramID, fragmentShaderID));
+	GLCall(glLinkProgram(passThroughProgramID));
+   
+	if( !checkProgramStatus(passThroughProgramID) )
+        return;
 
 	GLCall(glDeleteShader(vertexShaderID));
     GLCall(glDeleteShader(fragmentShaderID));
