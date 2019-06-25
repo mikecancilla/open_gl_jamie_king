@@ -1,12 +1,16 @@
 #include <Qt\qapplication.h>
-#include <MeGlWindow.h>
+#include <Qt\qwidget.h>
+#include <MeWidget.h>
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 
-	MeGlWindow meWindow;
-	meWindow.show();
+    MeWidget widg;
+    widg.show();
+
+	//MeGlWindow meWindow;
+	//meWindow.show();
 
 	return app.exec();
 }

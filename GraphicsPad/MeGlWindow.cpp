@@ -251,8 +251,8 @@ void MeGlWindow::paintGL()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, width(), height());
 
-    glm::vec3 lightPositionWorld(0, 5, 0);
-//	glm::vec3 lightPositionWorld = theModel->lightPosition;
+    //glm::vec3 lightPositionWorld(0, 5, 0);
+	glm::vec3 lightPositionWorld = theModel->lightPosition;
 
 	glm::mat4 modelToProjectionMatrix;
 	glm::mat4 viewToProjectionMatrix = glm::perspective(45.0f, ((float)width()) / height(), 0.1f, 20.0f);
@@ -517,14 +517,8 @@ void MeGlWindow::setupVertexArrays()
 }
 */
 
-/*
 MeGlWindow::MeGlWindow(MyModel* theModel)
     : theModel(theModel)
-{
-}
-*/
-
-MeGlWindow::MeGlWindow()
 {
 }
 

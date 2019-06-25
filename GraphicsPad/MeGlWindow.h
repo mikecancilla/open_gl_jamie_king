@@ -4,7 +4,7 @@
 #include <QtOpenGL\QGLWidget>
 #include <string>
 
-//class MyModel;
+class MyModel;
 
 #define ASSERT(x) if(!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
@@ -26,7 +26,7 @@ class MeGlWindow : public QGLWidget
 		GLenum statusType);
 	std::string readShaderCode(const char* fileName);
 	void installShaders();
-	//MyModel* theModel;
+	MyModel* theModel;
 
 protected:
 	void initializeGL();
@@ -35,6 +35,6 @@ protected:
 	void keyPressEvent(QKeyEvent*);
 
 public:
-	MeGlWindow(/*MyModel* theModel*/);
+	MeGlWindow(MyModel* theModel);
 	~MeGlWindow();
 };
