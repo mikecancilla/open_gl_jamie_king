@@ -19,12 +19,14 @@ MeWidget::MeWidget()
     controlsLayout->addLayout(lightPositionLayout = new QHBoxLayout);
 
     lightPositionLayout->addWidget(lightXSlider = new DebugSlider);
-    lightPositionLayout->addWidget(lightYSlider = new DebugSlider);
+    lightPositionLayout->addWidget(lightYSlider = new DebugSlider(3, 0, 20));
     lightPositionLayout->addWidget(lightZSlider = new DebugSlider);
 
     connect(lightXSlider, SIGNAL(valueChanged(float)), this, SLOT(sliderValueChanged()));
     connect(lightYSlider, SIGNAL(valueChanged(float)), this, SLOT(sliderValueChanged()));
     connect(lightZSlider, SIGNAL(valueChanged(float)), this, SLOT(sliderValueChanged()));
+
+    sliderValueChanged();
 }
 
 MeWidget::~MeWidget()

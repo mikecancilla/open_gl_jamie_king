@@ -13,6 +13,14 @@
 #include "MyModel.h"
 #include "Camera.h"
 
+//#define MY_GL_PRIMITIVE GL_POINTS
+//#define MY_GL_PRIMITIVE GL_LINES
+//#define MY_GL_PRIMITIVE GL_LINE_STRIP
+//#define MY_GL_PRIMITIVE GL_LINE_LOOP
+#define MY_GL_PRIMITIVE GL_TRIANGLES
+//#define MY_GL_PRIMITIVE GL_TRIANGLE_STRIP
+//#define MY_GL_PRIMITIVE GL_TRIANGLE_FAN
+
 const float X_DELTA = 0.1f;
 const uint NUM_VERTICIES_PER_TRI = 3;
 const uint NUM_FLOATS_PER_VERTICE = sizeof(Vertex) / sizeof(float);
@@ -264,7 +272,7 @@ void MeGlWindow::paintGL()
 
 	glUseProgram(programID);
 	GLint ambientLightUniformLocation = glGetUniformLocation(programID, "ambientLight");
-	glm::vec4 ambientLight(0.0f, 0.0f, 0.05f, 1.0f);
+	glm::vec4 ambientLight(0.02f, 0.02f, 0.1f, 1.0f);
 	glUniform4fv(ambientLightUniformLocation, 1, &ambientLight[0]);
 	GLint eyePositionWorldUniformLocation = glGetUniformLocation(programID, "eyePositionWorld");
 	glm::vec3 eyePosition = camera.getPosition();
@@ -282,7 +290,7 @@ void MeGlWindow::paintGL()
 	modelToProjectionMatrix = worldToProjectionMatrix * cubeModelToWorldMatrix;
 	glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &cubeModelToWorldMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, cubeNumIndices, GL_UNSIGNED_SHORT, (void*)cubeIndexByteOffset);
+	glDrawElements(MY_GL_PRIMITIVE, cubeNumIndices, GL_UNSIGNED_SHORT, (void*)cubeIndexByteOffset);
 
     // Arrow
     GLCall(glBindVertexArray(arrowVertexArrayObjectID));
@@ -290,7 +298,7 @@ void MeGlWindow::paintGL()
     modelToProjectionMatrix = worldToProjectionMatrix * arrowModelToWorldMatrix;
     glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &arrowModelToWorldMatrix[0][0]);
     glUniformMatrix4fv(fullTransformUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
-    GLCall(glDrawElements(GL_TRIANGLES, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexByteOffset));
+    GLCall(glDrawElements(MY_GL_PRIMITIVE, arrowNumIndices, GL_UNSIGNED_SHORT, (void*)arrowIndexByteOffset));
 
     // Plane
 	glBindVertexArray(planeVertexArrayObjectID);
@@ -299,7 +307,7 @@ void MeGlWindow::paintGL()
 	glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE,
 		&planeModelToWorldMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexByteOffset);
+	glDrawElements(MY_GL_PRIMITIVE, planeNumIndices, GL_UNSIGNED_SHORT, (void*)planeIndexByteOffset);
 
     // Teapot
 	glBindVertexArray(teapotVertexArrayObjectID);
@@ -312,7 +320,7 @@ void MeGlWindow::paintGL()
 	glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE,
 		&teapotModelToWorldMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexByteOffset);
+	glDrawElements(MY_GL_PRIMITIVE, teapotNumIndices, GL_UNSIGNED_SHORT, (void*)teapotIndexByteOffset);
 
 	// Sphere
 	glBindVertexArray(sphereVertexArrayObjectID);
@@ -321,7 +329,7 @@ void MeGlWindow::paintGL()
 	glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
 	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE,
 		&sphereModelToWorldMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, sphereNumIndices, GL_UNSIGNED_SHORT, (void*)sphereIndexByteOffset);
+	glDrawElements(MY_GL_PRIMITIVE, sphereNumIndices, GL_UNSIGNED_SHORT, (void*)sphereIndexByteOffset);
 
     // Torus
 	GLCall(glBindVertexArray(torusVertexArrayObjectID));
@@ -329,26 +337,36 @@ void MeGlWindow::paintGL()
 	modelToProjectionMatrix = worldToProjectionMatrix * torusModelToWorldMatrix;
 	GLCall(glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]));
 	GLCall(glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &torusModelToWorldMatrix[0][0]));
-	GLCall(glDrawElements(GL_TRIANGLES, torusNumIndices, GL_UNSIGNED_SHORT, (void*)torusIndexByteOffset));
+	GLCall(glDrawElements(MY_GL_PRIMITIVE, torusNumIndices, GL_UNSIGNED_SHORT, (void*)torusIndexByteOffset));
 
-    /*
+    GLCall(glUseProgram(passThroughProgramID));
+	
     // Cube light
-	glBindVertexArray(cubeVertexArrayObjectID);
+    /*
+    GLCall(glBindVertexArray(cubeVertexArrayObjectID));
 	cubeModelToWorldMatrix =
 		glm::translate(lightPositionWorld) *
 		glm::scale(glm::vec3(0.1f, 0.1f, 0.1f));
 	modelToProjectionMatrix = worldToProjectionMatrix * cubeModelToWorldMatrix;
-	glUseProgram(passThroughProgramID);
-	fullTransformationUniformLocation = glGetUniformLocation(programID, "modelToProjectionMatrix");
-	glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]);
-	modelToWorldMatrixUniformLocation = glGetUniformLocation(programID, "modelToWorldMatrix");
-	glUniformMatrix4fv(modelToWorldMatrixUniformLocation, 1, GL_FALSE, &cubeModelToWorldMatrix[0][0]);
-	glDrawElements(GL_TRIANGLES, cubeNumIndices, GL_UNSIGNED_SHORT, (void*)cubeIndexByteOffset);
+	fullTransformationUniformLocation = glGetUniformLocation(passThroughProgramID, "modelToProjectionMatrix");
+	GLCall(glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]));
+	GLCall(glDrawElements(MY_GL_PRIMITIVE, cubeNumIndices, GL_UNSIGNED_SHORT, (void*)cubeIndexByteOffset));
     */
+
+    // Sphere Light
+    GLCall(glBindVertexArray(sphereVertexArrayObjectID));
+	sphereModelToWorldMatrix =
+		glm::translate(lightPositionWorld) *
+		glm::scale(glm::vec3(0.1f, 0.1f, 0.1f));
+	modelToProjectionMatrix = worldToProjectionMatrix * sphereModelToWorldMatrix;
+	fullTransformationUniformLocation = glGetUniformLocation(passThroughProgramID, "modelToProjectionMatrix");
+	GLCall(glUniformMatrix4fv(fullTransformationUniformLocation, 1, GL_FALSE, &modelToProjectionMatrix[0][0]));
+	GLCall(glDrawElements(MY_GL_PRIMITIVE, sphereNumIndices, GL_UNSIGNED_SHORT, (void*)sphereIndexByteOffset));
 }
 
 void MeGlWindow::mouseMoveEvent(QMouseEvent *e)
 {
+    setFocus();
 	camera.mouseUpdate(glm::vec2(e->x(), e->y()));
 	repaint();
 }
@@ -532,11 +550,11 @@ MeGlWindow::~MeGlWindow()
 void MeGlWindow::initializeGL()
 {
     setMinimumSize(1200, 600);
-    setMouseTracking(true);
+    setMouseTracking(false);
 
 	glewInit();
     GLCall(glEnable(GL_DEPTH_TEST));
-    //GLCall(glEnable(GL_CULL_FACE));
+    GLCall(glEnable(GL_CULL_FACE));
 
     //glCullFace(GL_BACK); // This is the default
     //glCullFace(GL_FRONT);
